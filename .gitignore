@@ -1,0 +1,6 @@
+web/services/.idea
+web/services/.vscode
+web/services/packages/*
+web/services/**/__pycache__
+.vscode
+.idea
