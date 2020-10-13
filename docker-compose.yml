@@ -6,14 +6,21 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    networks:
+      - cmd-detect-backend
   db:
     # image: "mariadb:10.5.6-focal"
     build: mysql
     restart: always
+    privileged: true
+    volumes:
+      - ./mysql/data/:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "wodemima"
+    networks:
+      - cmd-detect-backend
   phpmyadmin:
     image: "phpmyadmin/phpmyadmin:5"
     restart: always
@@ -25,3 +32,9 @@ services:
       PMA_ARBITRARY: 1
     depends_on:
       - db
+    networks:
+      - cmd-detect-backend
+
+networks:
+  cmd-detect-backend:
+    driver: bridge
