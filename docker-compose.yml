@@ -1,7 +1,7 @@
 version: "3"
 services:
   web:
-    build: web-cmd-detections-backend
+    build: web
     ports:
       - "8000:8000"
     depends_on:
