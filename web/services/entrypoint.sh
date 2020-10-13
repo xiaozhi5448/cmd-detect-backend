@@ -2,10 +2,11 @@
 
 # waiting for db service
 
-sleep 8
-
-# creating database
-echo "creating database"
+while ! nc db 3306; do
+  >&2 echo "mysql is unavailable - sleeping"
+  sleep 1
+done
+>&2 echo "Postgres is up - executing command"
 
 # Apply database migrations
 echo "Apply database migrations"
