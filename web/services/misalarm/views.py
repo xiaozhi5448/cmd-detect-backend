@@ -12,6 +12,7 @@ import json
 @csrf_exempt
 def commands(request):
     status_code = 200
+    data = None
     if request.method == 'POST':
         if 'commands' in request.POST:
             cmds = json.loads(request.POST['commands'])
@@ -20,41 +21,38 @@ def commands(request):
                 MisAlarmCommand.objects.bulk_create(new_commands)
             except Exception as e:
                 print(e)
-
                 pass
-            contents = {
-                'msg': 'commands record created!',
-                'code': 201
-            }
+            msg = 'commands record created!'
+            code = 201
             status_code = 201
         else:
-            contents = {
-                'msg': 'argument commands missing!',
-                'code': 400
-            }
+            msg = 'argument commands missing!'
+            code = 400
             status_code = 400
     elif request.method == 'GET':
         if 'timestamp' in request.GET:
             timestamp = float(request.GET['timestamp'])
             prev_time = datetime.fromtimestamp(timestamp)
             new_commands = MisAlarmCommand.objects.filter(time__gt=prev_time)
-            contents = [obj.command for obj in new_commands]
-
+            data = [obj.command for obj in new_commands]
+            msg = 'get commands successfully!'
+            code = 200
         else:
-            contents = {
-                'msg': 'argument timestamp missed!',
-                'code': 400
-            }
+            msg = 'argument timestamp missed!'
+            code = 400
             status_code = 400
 
     else:
         # unsupported method
-        contents = {
-            'msg': 'unsupport request method, only get and post legal!',
-            'code': 420
-        }
-        status_code = 405
+        msg = 'unsupport request method, only get and post legal!'
+        code = 405
 
+        status_code = 405
+    contents = {
+        'msg': msg,
+        'code': code,
+        'data': data
+    }
     return HttpResponse(json.dumps(contents, ensure_ascii=False), content_type="application/json,charset=utf-8",
                         status=status_code)
 @csrf_exempt
