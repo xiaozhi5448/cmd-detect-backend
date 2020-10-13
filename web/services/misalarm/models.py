@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class MisAlarmCommand(models.Model):
     # id = models.IntegerField(auto_created=True, db_column='id', primary_key=True)
-    command = models.CharField(max_length=2000, db_column='command')
+    command = models.CharField(max_length=2000, db_column='command', unique=True)
     time = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -13,7 +13,7 @@ class MisAlarmCommand(models.Model):
 
 class NewBusiness(models.Model):
 
-    ip_addr = models.CharField(max_length=16, db_column='ip_addr')
+    ip_addr = models.CharField(max_length=16, db_column='ip_addr', unique=True)
     time = models.DateTimeField(auto_now=True)
 
     class Meta:

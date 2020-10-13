@@ -15,7 +15,13 @@ def commands(request):
     if request.method == 'POST':
         if 'commands' in request.POST:
             cmds = json.loads(request.POST['commands'])
-            [MisAlarmCommand.objects.create(command=cmd) for cmd in cmds]
+            new_commands = [MisAlarmCommand(command=cmd) for cmd in cmds]
+            try:
+                MisAlarmCommand.objects.bulk_create(new_commands)
+            except Exception as e:
+                print(e)
+
+                pass
             contents = {
                 'msg': 'commands record created!',
                 'code': 201
@@ -61,7 +67,11 @@ def new_business_ip(request):
         if 'addresses' in request.POST:
             addrs = json.loads(request.POST['addresses'])
             new_ips = [NewBusiness(ip_addr=addr) for addr in addrs]
-            NewBusiness.objects.bulk_create(new_ips)
+            try:
+                NewBusiness.objects.bulk_create(new_ips)
+            except Exception as e:
+                print(e)
+                pass
             status_code = 201
             msg = 'new ip address created!'
             code = 201
