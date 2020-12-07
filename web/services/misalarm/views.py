@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import QueryDict
 from misalarm.models import MisAlarmCommand
 from misalarm.models import NewBusiness
 from datetime import datetime
@@ -35,13 +35,23 @@ def commands(request):
             prev_time = datetime.fromtimestamp(timestamp)
             new_commands = MisAlarmCommand.objects.filter(time__gt=prev_time)
             data = [obj.command for obj in new_commands]
-            msg = 'get commands successfully!'
+            msg = 'get commands newer than {}!'.format(prev_time.ctime())
             code = 200
         else:
-            msg = 'argument timestamp missed!'
-            code = 400
-            status_code = 400
-
+            new_commands = MisAlarmCommand.objects.all()
+            data = [obj.command for obj in new_commands]
+            msg = 'get all commands'
+            code = 200
+            status_code = 200
+    elif request.method == 'DELETE':
+        params=QueryDict(request.body)
+        commands = params.get('commands', default=[])
+        if commands:
+            MisAlarmCommand.objects.filter(command__in=commands).delete()
+            msg = 'commands deleted!'
+        msg = 'missing commands parameter!'
+        code = 200
+        status_code = 200
     else:
         # unsupported method
         msg = 'unsupport request method, only get and post legal!'
@@ -84,6 +94,14 @@ def new_business_ip(request):
         status_code = 200
         msg = 'get ip addr successfully'
         code = 200
+    elif request.method == 'DELETE':
+        params = QueryDict(request.body)
+        addrs = json.loads(params.get('addresses'))
+        if addrs:
+            NewBusiness.objects.filter(ip_addr__in=addrs).delete()
+            msg = 'ip addresses deleted sucessfully!'
+        code = 200
+        status_code = 200
     else:
         msg = 'unsupport method!'
         code  = 405

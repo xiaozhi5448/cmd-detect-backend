@@ -13,7 +13,8 @@ class MisAlarmCommand(models.Model):
 
 class NewBusiness(models.Model):
 
-    ip_addr = models.CharField(max_length=16, db_column='ip_addr')
+    ip_addr = models.CharField(max_length=16, db_column='ip_addr', unique=True)
+    count = models.IntegerField(verbose_name='连续告警次数', default=0)
     time = models.DateTimeField(auto_now=True)
 
     class Meta:
